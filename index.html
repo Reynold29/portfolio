@@ -27,6 +27,99 @@
       color: var(--text-dark);
       min-height: 100vh;
       transition: background 0.3s, color 0.3s;
+      overflow-x: hidden;
+      position: relative;
+    }
+    /* Ambient background pulses */
+    .bg-effects {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .bg-pulse {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.45;
+      animation: pulse-drift 12s ease-in-out infinite;
+    }
+    .bg-pulse-1 {
+      width: 55vw;
+      height: 55vw;
+      top: -15%;
+      left: -10%;
+      background: radial-gradient(circle, rgba(59,130,246,0.35) 0%, transparent 70%);
+      animation-duration: 14s;
+    }
+    .bg-pulse-2 {
+      width: 45vw;
+      height: 45vw;
+      bottom: -10%;
+      right: -8%;
+      background: radial-gradient(circle, rgba(34,211,238,0.28) 0%, transparent 70%);
+      animation-duration: 18s;
+      animation-delay: -4s;
+    }
+    .bg-pulse-3 {
+      width: 35vw;
+      height: 35vw;
+      top: 40%;
+      left: 45%;
+      background: radial-gradient(circle, rgba(99,102,241,0.22) 0%, transparent 70%);
+      animation-duration: 16s;
+      animation-delay: -8s;
+    }
+    @keyframes pulse-drift {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+      33% { transform: translate(4%, -3%) scale(1.08); opacity: 0.55; }
+      66% { transform: translate(-3%, 4%) scale(0.95); opacity: 0.35; }
+    }
+    #particle-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .cursor-glow {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(34,211,238,0.12) 0%, rgba(59,130,246,0.04) 45%, transparent 72%);
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      mix-blend-mode: screen;
+      will-change: transform;
+    }
+    body.cursor-active .cursor-glow { opacity: 1; }
+    .page-shell {
+      position: relative;
+      z-index: 3;
+    }
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.75s cubic-bezier(.2,.8,.2,1), transform 0.75s cubic-bezier(.2,.8,.2,1);
+    }
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-pulse { animation: none; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .cursor-glow { display: none; }
     }
     html, body {
       scroll-behavior: smooth;
@@ -126,12 +219,36 @@
       display: flex;
       gap: 1.2rem;
       margin-top: 0.5rem;
+      align-items: center;
     }
     .hero-socials a {
       color: #fff;
-      font-size: 1.5rem;
       opacity: 0.8;
       transition: color 0.2s, opacity 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      flex-shrink: 0;
+    }
+    .hero-socials a i {
+      font-size: 1.5rem;
+      line-height: 1;
+      width: 1.5rem;
+      height: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-socials a.social-wellfound {
+      width: 1.875rem;
+      height: 1.875rem;
+    }
+    .hero-socials a.social-wellfound .social-icon {
+      width: 1.875rem;
+      height: 1.875rem;
+      display: block;
     }
     .hero-socials a:hover { color: var(--accent); opacity: 1; }
     .toggle-btn {
@@ -254,11 +371,23 @@
       position: relative;
       overflow: hidden;
       margin-bottom: 0.5rem;
-      transition: box-shadow 0.18s, transform 0.18s;
+      transition: box-shadow 0.25s, transform 0.25s cubic-bezier(.2,.8,.2,1), border-color 0.25s;
+      backdrop-filter: blur(12px);
     }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(59,130,246,0.08), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.25s;
+      pointer-events: none;
+    }
+    .project-card:hover::before { opacity: 1; }
     .project-card:hover {
-      box-shadow: 0 8px 32px rgba(59,130,246,0.13);
-      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 12px 40px rgba(59,130,246,0.18);
+      transform: translateY(-6px) scale(1.02);
+      border-color: rgba(59,130,246,0.35);
     }
     .project-img {
       width: 100%;
@@ -344,12 +473,36 @@
       display: flex;
       gap: 1.2rem;
       margin-bottom: 1rem;
+      align-items: center;
     }
     .footer-socials a {
       color: #fff;
-      font-size: 1.3rem;
       opacity: 0.8;
       transition: color 0.2s, opacity 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.3rem;
+      height: 1.3rem;
+      flex-shrink: 0;
+    }
+    .footer-socials a i {
+      font-size: 1.3rem;
+      line-height: 1;
+      width: 1.3rem;
+      height: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .footer-socials a.social-wellfound {
+      width: 1.675rem;
+      height: 1.675rem;
+    }
+    .footer-socials a.social-wellfound .social-icon {
+      width: 1.675rem;
+      height: 1.675rem;
+      display: block;
     }
     .footer-socials a:hover { color: var(--accent); opacity: 1; }
     .footer-links {
@@ -641,6 +794,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
+  <div class="bg-effects" aria-hidden="true">
+    <div class="bg-pulse bg-pulse-1"></div>
+    <div class="bg-pulse bg-pulse-2"></div>
+    <div class="bg-pulse bg-pulse-3"></div>
+  </div>
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+  <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
+  <div class="page-shell">
   <!-- Navbar -->
   <nav class="main-navbar">
     <div class="navbar-container">
@@ -655,79 +816,89 @@
   </nav>
   <!-- Hero Section -->
   <section class="hero" id="home">
-    <div class="hero-badge" id="badge-pill"><span id="badge-rotator"></span></div>
-    <div class="hero-title"><span id="typewriter-main"></span></div>
-    <div class="hero-roles"><span class="hero-roles-static">I'm a&nbsp;</span><span id="typewriter-roles" style="font-weight: 600;"></span><span class="type-cursor">|</span></div>
-    <div class="hero-desc">I'm a developer who loves building things and share what I learn. I enjoy working with modern web technologies, Flutter -- buidling mobile apps, and making projects that help people. I'm a Tech-Support Engineer by day and a developer by night. Let's Connect and build something great together!</div>
-    <div class="hero-btns">
+    <div class="hero-badge reveal" id="badge-pill"><span id="badge-rotator"></span></div>
+    <div class="hero-title reveal reveal-delay-1"><span id="typewriter-main"></span></div>
+    <div class="hero-roles reveal reveal-delay-2"><span class="hero-roles-static">I'm a&nbsp;</span><span id="typewriter-roles" style="font-weight: 600;"></span><span class="type-cursor">|</span></div>
+    <div class="hero-desc reveal reveal-delay-2">I'm a developer who loves building things and share what I learn. I enjoy working with modern web technologies, Flutter — buidling mobile apps, and making projects that help people. I'm a Tech-Support Engineer by day and a developer by night. Let's Connect and build something great together!</div>
+    <div class="hero-btns reveal reveal-delay-3">
       <a class="btn" href="#">Let's Connect <i class="fa fa-arrow-down"></i></a>
       <a class="btn" href="#projects">My Projects</a>
       <a class="btn" href="#about">More about me</a>
     </div>
-    <div class="hero-socials">
+    <div class="hero-socials reveal reveal-delay-4">
       <a href="https://github.com/Reynold29/" title="GitHub"><i class="fab fa-github"></i></a>
       <a href="https://www.linkedin.com/in/reynoldpreetham/" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="https://wellfound.com/u/reynold-preetham" class="social-wellfound" title="Wellfound" target="_blank" rel="noopener"><svg class="social-icon" viewBox="0 6 24 12" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M23.998 8.128c0.063 -1.379 -1.612 -2.376 -2.795 -1.664 -1.23 0.598 -1.322 2.52 -0.156 3.234 1.2 0.862 2.995 -0.09 2.951 -1.57zm0 7.748c0.063 -1.38 -1.612 -2.377 -2.795 -1.665 -1.23 0.598 -1.322 2.52 -0.156 3.234 1.2 0.863 2.995 -0.09 2.951 -1.57zm-20.5 1.762L0 6.364h3.257l2.066 8.106 2.245 -8.106h3.267l2.244 8.106 2.065 -8.106h3.257l-3.54 11.274H11.39c-0.73 -2.713 -1.46 -5.426 -2.188 -8.14l-2.233 8.14H3.5z"/></svg></a>
       <a href="https://portfolio.reyziehomelab.com/" title="Website"><i class="fa fa-globe"></i></a>
       <a href="mailto:reynoldclare02@gmail.com" title="Mail"><i class="fa fa-envelope"></i></a>
     </div>
   </section>
   <!-- Section: Featured Projects -->
   <section class="projects-section" id="projects">
-    <div class="projects-title">Featured <span class="accent">Projects</span></div>
-    <div class="section-desc">A selection of projects that I've worked on</div>
+    <div class="projects-title reveal">Featured <span class="accent">Projects</span></div>
+    <div class="section-desc reveal reveal-delay-1">A selection of projects that I've worked on</div>
     <div class="projects-list">
-      <div class="project-card">
+      <div class="project-card reveal reveal-delay-1">
         <img class="project-img" src="https://dummyimage.com/400x140/232f47/fff&text=Dashboard" alt="Dashboard Preview">
         <div class="project-title">Dashboard</div>
-        <div class="project-desc">A modern dashboard app for managing and visualizing data. (Edit this description!)</div>
+        <div class="project-desc">A modern dashboard app for managing and correcting lyric data.</div>
         <div class="project-tools">Tools: Node.js, Express, React</div>
         <div class="project-links">
-          <a class="project-link-btn" href="dashboard/frontend/index.html">View Project <i class="fa fa-arrow-right"></i></a>
+          <a class="project-link-btn" href="https://projects.reyziehomelab.com/dashboard" target="_blank" rel="noopener">View Project <i class="fa fa-arrow-right"></i></a>
         </div>
       </div>
-      <div class="project-card">
+      <div class="project-card reveal reveal-delay-2">
         <img class="project-img" src="https://dummyimage.com/400x140/232f47/fff&text=Hymns" alt="Hymns Preview">
         <div class="project-title">Hymns</div>
-        <div class="project-desc">A collection of hymns and spiritual songs with a beautiful UI. (Edit this description!)</div>
-        <div class="project-tools">Tools: HTML, CSS, JS</div>
+        <div class="project-desc">A collection of hymns and spiritual songs for CSI Churches with a beautiful UI.</div>
+        <div class="project-tools">Tools: Flutter, Dart, Kotlin, C/C++</div>
         <div class="project-links">
-          <a class="project-link-btn" href="hymns/index.html">View Project <i class="fa fa-arrow-right"></i></a>
+          <a class="project-link-btn" href="https://projects.reyziehomelab.com/hymns" target="_blank" rel="noopener">View Project <i class="fa fa-arrow-right"></i></a>
         </div>
       </div>
-      <div class="project-card">
+      <div class="project-card reveal reveal-delay-3">
         <img class="project-img" src="https://dummyimage.com/400x140/232f47/fff&text=LinkFree" alt="LinkFree Preview">
         <div class="project-title">LinkFree</div>
-        <div class="project-desc">An open source alternative to LinkTree for sharing your links. (Edit this description!)</div>
+        <div class="project-desc">An open source alternative to LinkTree for sharing links.</div>
         <div class="project-tools">Tools: HTML, CSS, JS</div>
         <div class="project-links">
-          <a class="project-link-btn" href="linkfree/index.html">View Project <i class="fa fa-arrow-right"></i></a>
+          <a class="project-link-btn" href="https://projects.reyziehomelab.com/linkfree" target="_blank" rel="noopener">View Project <i class="fa fa-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="project-card reveal reveal-delay-4">
+        <img class="project-img" src="https://dummyimage.com/400x140/232f47/fff&text=Worship+Companion" alt="Worship Companion Preview">
+        <div class="project-title">Worship Companion</div>
+        <div class="project-desc">A companion app for worship sessions — lyrics, chords, and multi-lingual support.</div>
+        <div class="project-tools">Tools: Flutter, Dart</div>
+        <div class="project-links">
+          <a class="project-link-btn" href="https://projects.reyziehomelab.com/worshipcompanion" target="_blank" rel="noopener">View Project <i class="fa fa-arrow-right"></i></a>
         </div>
       </div>
     </div>
   </section>
   <!-- Resume Section -->
   <section class="projects-section" id="resume">
-    <div class="projects-title">My <span class="accent">Resume</span></div>
-    <div class="section-desc">View or download my latest resume</div>
-    <div style="text-align:center;margin-top:1.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+    <div class="projects-title reveal">My <span class="accent">Resume</span></div>
+    <div class="section-desc reveal reveal-delay-1">View or download my latest resume</div>
+    <div class="reveal reveal-delay-2" style="text-align:center;margin-top:1.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
       <a class="btn" href="assets/Resume.pdf" target="_blank" rel="noopener">View Resume <i class="fa fa-file-pdf"></i></a>
       <a class="btn" href="assets/Resume.pdf" download>Download PDF <i class="fa fa-download"></i></a>
     </div>
   </section>
   <!-- About Me Section -->
   <section class="about-section" id="about">
-    <div class="about-header">
+    <div class="about-header reveal">
       <div class="about-title">About <span class="about-title-accent">Me</span></div>
       <div class="about-subtitle">A story of growth and discovery</div>
     </div>
     <div class="about-content">
-      <div class="about-photo">
+      <div class="about-photo reveal reveal-delay-1">
         <div class="polaroid">
-          <img src="assets/Profile-Icon.jpg" alt="Reynold's Photo" class="polaroid-img">
+          <img src="assets/Me.jpg" alt="Reynold's Photo" class="polaroid-img">
           <div class="polaroid-signature">Reynold</div>
         </div>
       </div>
-      <div class="about-bio">
+      <div class="about-bio reveal reveal-delay-2">
         <div class="about-name">Reynold Preetham</div>
         <div class="about-role">Full-stack and Flutter Developer</div>
         <div class="about-desc">
@@ -765,6 +936,7 @@
         <div class="footer-socials">
             <a href="https://github.com/Reynold29/" title="GitHub"><i class="fab fa-github"></i></a>
             <a href="https://www.linkedin.com/in/reynoldpreetham/" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="https://wellfound.com/u/reynold-preetham" class="social-wellfound" title="Wellfound" target="_blank" rel="noopener"><svg class="social-icon" viewBox="0 6 24 12" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M23.998 8.128c0.063 -1.379 -1.612 -2.376 -2.795 -1.664 -1.23 0.598 -1.322 2.52 -0.156 3.234 1.2 0.862 2.995 -0.09 2.951 -1.57zm0 7.748c0.063 -1.38 -1.612 -2.377 -2.795 -1.665 -1.23 0.598 -1.322 2.52 -0.156 3.234 1.2 0.863 2.995 -0.09 2.951 -1.57zm-20.5 1.762L0 6.364h3.257l2.066 8.106 2.245 -8.106h3.267l2.244 8.106 2.065 -8.106h3.257l-3.54 11.274H11.39c-0.73 -2.713 -1.46 -5.426 -2.188 -8.14l-2.233 8.14H3.5z"/></svg></a>
             <a href="https://portfolio.reyziehomelab.com/" title="Website"><i class="fa fa-globe"></i></a>
             <a href="mailto:reynoldclare02@gmail.com" title="Mail"><i class="fa fa-envelope"></i></a>
         </div>
@@ -790,7 +962,237 @@
       Copyright ©2025 Reynold Clare. All rights reserved.
     </div>
   </footer>
+  </div>
   <script>
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach((el) => {
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.92) {
+        el.classList.add('revealed');
+      } else {
+        revealObserver.observe(el);
+      }
+    });
+
+    // Cursor glow + stardust field
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cursorGlow = document.getElementById('cursor-glow');
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let mouse = { x: -9999, y: -9999 };
+    let particles = [];
+    let frame = 0;
+    const GLOW_RADIUS = 50;
+    const PARTICLE_COUNT = prefersReducedMotion ? 0 : (window.innerWidth < 768 ? 60 : 120);
+    const REPEL_RADIUS = 52;
+    const REPEL_STRENGTH = 1.15;
+    const PALETTE = [
+      [147, 197, 253],
+      [34, 211, 238],
+      [129, 140, 248],
+      [196, 181, 253],
+      [226, 232, 240]
+    ];
+    const TYPES = ['orb', 'spark', 'ring', 'shard', 'cross'];
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function resizeCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const layer = Math.random() < 0.35 ? 0 : Math.random() < 0.6 ? 1 : 2;
+        const type = pick(TYPES);
+        const size = type === 'orb'
+          ? (layer === 0 ? 10 : layer === 1 ? 6 : 3) + Math.random() * 4
+          : type === 'ring'
+            ? 3 + Math.random() * 5
+            : 1.5 + Math.random() * 2.5;
+        particles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          vx: (Math.random() - 0.5) * (0.12 + layer * 0.08),
+          vy: (Math.random() - 0.5) * (0.12 + layer * 0.08),
+          layer,
+          type,
+          size,
+          rotation: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 0.012,
+          phase: Math.random() * Math.PI * 2,
+          color: pick(PALETTE),
+          alpha: 0.18 + Math.random() * 0.42
+        });
+      }
+    }
+
+    function updateParticles() {
+      for (const p of particles) {
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < REPEL_RADIUS && dist > 2) {
+          const t = 1 - dist / REPEL_RADIUS;
+          const force = t * t * REPEL_STRENGTH * 0.14;
+          p.vx += (dx / dist) * force;
+          p.vy += (dy / dist) * force;
+        }
+        p.vx *= 0.986;
+        p.vy *= 0.986;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotation += p.spin;
+        if (p.x < -30) p.x = window.innerWidth + 30;
+        if (p.x > window.innerWidth + 30) p.x = -30;
+        if (p.y < -30) p.y = window.innerHeight + 30;
+        if (p.y > window.innerHeight + 30) p.y = -30;
+      }
+    }
+
+    function drawSpark(x, y, size, rotation, rgb, alpha) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rotation);
+      ctx.beginPath();
+      for (let i = 0; i < 4; i++) {
+        const a = (Math.PI / 2) * i;
+        const tipX = Math.cos(a) * size;
+        const tipY = Math.sin(a) * size;
+        const notchX = Math.cos(a + Math.PI / 4) * size * 0.22;
+        const notchY = Math.sin(a + Math.PI / 4) * size * 0.22;
+        if (i === 0) ctx.moveTo(tipX, tipY);
+        else ctx.lineTo(tipX, tipY);
+        ctx.lineTo(notchX, notchY);
+      }
+      ctx.closePath();
+      ctx.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawCross(x, y, size, rotation, rgb, alpha) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rotation);
+      ctx.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+      ctx.lineWidth = 0.8;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(-size, 0);
+      ctx.lineTo(size, 0);
+      ctx.moveTo(0, -size);
+      ctx.lineTo(0, size);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawShard(x, y, size, rotation, rgb, alpha) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rotation);
+      ctx.beginPath();
+      ctx.moveTo(-size * 1.4, 0);
+      ctx.lineTo(size * 0.5, -size * 0.35);
+      ctx.lineTo(size * 0.5, size * 0.35);
+      ctx.closePath();
+      ctx.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawParticle(p) {
+      const twinkle = 0.75 + Math.sin(frame * 0.02 + p.phase) * 0.25;
+      const depth = 0.55 + p.layer * 0.2;
+      const alpha = p.alpha * twinkle * depth;
+      const [r, g, b] = p.color;
+      const near = Math.hypot(p.x - mouse.x, p.y - mouse.y) < REPEL_RADIUS * 1.2;
+      const boost = near ? 0.15 : 0;
+
+      if (p.type === 'orb') {
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+        grad.addColorStop(0, `rgba(${r},${g},${b},${alpha + boost})`);
+        grad.addColorStop(0.45, `rgba(${r},${g},${b},${(alpha + boost) * 0.35})`);
+        grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.type === 'ring') {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha + boost})`;
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      } else if (p.type === 'spark') {
+        drawSpark(p.x, p.y, p.size, p.rotation, p.color, alpha + boost);
+      } else if (p.type === 'cross') {
+        drawCross(p.x, p.y, p.size, p.rotation, p.color, alpha + boost);
+      } else {
+        drawShard(p.x, p.y, p.size, p.rotation, p.color, alpha + boost);
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      const sorted = [...particles].sort((a, b) => a.layer - b.layer);
+      for (const p of sorted) drawParticle(p);
+    }
+
+    function animateParticles() {
+      frame++;
+      updateParticles();
+      drawParticles();
+      cursorGlow.style.transform = `translate3d(${mouse.x - GLOW_RADIUS}px, ${mouse.y - GLOW_RADIUS}px, 0)`;
+      requestAnimationFrame(animateParticles);
+    }
+
+    if (!prefersReducedMotion && PARTICLE_COUNT > 0) {
+      resizeCanvas();
+      initParticles();
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        initParticles();
+      });
+      animateParticles();
+
+      window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        document.body.classList.add('cursor-active');
+      });
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches[0]) {
+          mouse.x = e.touches[0].clientX;
+          mouse.y = e.touches[0].clientY;
+          document.body.classList.add('cursor-active');
+        }
+      }, { passive: true });
+      window.addEventListener('mouseleave', () => {
+        mouse.x = -9999;
+        mouse.y = -9999;
+        document.body.classList.remove('cursor-active');
+      });
+    } else {
+      canvas.style.display = 'none';
+    }
+
     // Typewriter effect for hero title and roles
     function typeWriterEffect(element, text, speed = 60, callback) {
       let i = 0;
