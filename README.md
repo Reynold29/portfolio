@@ -32,11 +32,47 @@ npx serve .
 
 Then open [http://localhost:8080](http://localhost:8080).
 
-## Deploy
+## Deploy (GitHub Pages + Cloudflare)
 
-Upload the repo contents to any static host (Vercel, Netlify, Cloudflare Pages, GitHub Pages, or a homelab reverse proxy). Point `portfolio.reyziehomelab.com` at the deployment.
+Hosted on **GitHub Pages**, with **Cloudflare** handling DNS, proxy, and DDoS protection.
 
-No `npm install` or build command is needed — deploy the files as-is.
+**Target URL:** `https://portfolio.reyziehomelab.com`
+
+No build step — push to `main` and GitHub Pages deploys automatically.
+
+### 1. GitHub Pages
+
+1. Repo → **Settings** → **Pages**
+2. **Source:** Deploy from branch `main` / root
+3. **Custom domain:** `portfolio.reyziehomelab.com`
+4. Wait for DNS check to pass, then enable **Enforce HTTPS**
+
+The `CNAME` file in this repo tells GitHub which domain to use.
+
+### 2. Cloudflare DNS
+
+In the Cloudflare dashboard for `reyziehomelab.com`:
+
+| Type  | Name        | Target               | Proxy   |
+|-------|-------------|----------------------|---------|
+| CNAME | `portfolio` | `reynold29.github.io` | Proxied |
+
+- **Proxied** (orange cloud) = traffic goes through Cloudflare for DDoS protection and caching
+- Do not use GitHub's A records when proxying through Cloudflare — use the CNAME above
+
+### 3. Cloudflare SSL
+
+Under **SSL/TLS**:
+
+- Encryption mode: **Full (strict)**
+- Enable **Always Use HTTPS** (SSL/TLS → Edge Certificates)
+
+### 4. Verify
+
+After DNS propagates (usually a few minutes):
+
+- `https://portfolio.reyziehomelab.com` loads the site
+- GitHub Pages shows a green check on the custom domain
 
 ## External dependencies
 
